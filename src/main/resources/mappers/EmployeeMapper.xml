@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="employee.mapper.EmployeeMapper">
+<!-- resultMap -->	
+	<resultMap type="Employee" id="EmployeeResult">
+		<id property="empNo" column="empno"></id>
+		<result property="empName" column="empname"></result>
+		<result property="title" column="title"></result>
+		<result property="manager.empNo" column="manager"></result>
+		<result property="salary" column="salary"></result>
+		<result property="dept.deptNo" column="dno"></result>
+	</resultMap>
+	
+<!-- sql -->	
+	<sql id="selectSQL">
+		SELECT EMPNO,EMPNAME,TITLE,MANAGER,SALARY,DNO FROM employee
+	</sql>
+	
+	<sql id="whereSQL">
+		<if test="empNo != null">
+			where empno = #{empNo}
+		</if>
+	</sql>
+	
+	<sql id="setSQL">
+		<set>
+			<if test="empName != null"> empname = #{empName},</if>
+			<if test="title != null">title = #{title}, </if>
+			<if test="manager.empNo != null"> manager = #{manager.empNo},</if>
+			<if test="salary != null">salary = #{salary},</if>
+			<if test="dept.deptNo != null">dno = #{dept.deptNo},</if>
+		</set>
+	</sql>
+	
+	
+<!--  -->	
+	<select id="getLists" resultMap="EmployeeResult">
+		<include refid="selectSQL"></include>
+	</select>
+	
+	<select id="getEmployee" resultMap="EmployeeResult">
+		<include refid="selectSQL"></include>
+		<include refid="whereSQL"></include>
+	</select>
+	
+	<insert id="registerEmployee" parameterType="Employee">
+		insert into employee values (#{empNo},#{empName},#{title},#{manager.empNo},#{salary},#{dept.deptNo})
+	</insert>
+	
+	<update id="modifyEmployee" parameterType="Employee">
+		update employee 
+		<include refid="setSQL"></include>
+		<include refid="whereSQL"></include>
+	</update>
+	
+	<delete id="removeEmployee" parameterType="Employee">
+		delete from employee <include refid="whereSQL"></include>
+	</delete>
+</mapper>
